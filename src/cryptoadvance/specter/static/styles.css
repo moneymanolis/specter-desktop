@@ -509,22 +509,31 @@ input:hover{
 .flex-item{
     margin: 0.5em;
 }
-.smaller-card{
-    min-width: 220px;
+.balances-left-titles{
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    align-items: center;
+}
+.balances-right-amounts{
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    align-items: flex-start;
+}
+.balances{
+    display: flex;
+    line-height: 10px;
+    width: 25em;
     padding: 15px;
     background: var(--cmap-bg-lighter);
     border: 2px solid var(--cmap-border);
     border-radius: 4px;
     color: #fff;
-    font-size: 0.9em;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
+    font-size: 1rem;
     margin: 5px;
 }
-.smaller-card:hover{
+.balances:hover{
     border: 2px solid hsl(217, 15%, 55%);
 }
 .small-card{

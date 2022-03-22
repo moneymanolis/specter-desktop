@@ -8,73 +8,96 @@
 {% macro total_wallet_balances(wallet, specter) -%}
     <div style="display: flex; flex-direction: column; min-width: 300px; align-items: center">
         <span style="line-height:30px; font-size: 1.1em;">Balance:</span>
-        <div class="smaller-card">
-            <div> 
-                Total amount: <span id="fullbalance_amount">{{ wallet.amount_total | btcunitamount }}</span>
-                {% if specter.unit == 'sat' %}
-                    sats
-                {% else %}
-                    {% if specter.is_testnet %}t{%endif%}{% if specter.is_liquid %}L{%endif%}BTC
+        <div class="balances">
+            <div class="balances-left-titles">
+                <h3>Total amount:</h3>
+                {% if wallet.amount_unconfirmed > 0 or wallet.amount_immature > 0 %}
+                    <p>Confirmed:</p> 
                 {% endif %}
-                {% if specter.price_check %} 
-                    <span class="note">({{ wallet.amount_total | altunit }})</span>
+                {% if (wallet.amount_unconfirmed > 0 or wallet.amount_immature > 0) and wallet.amount_unconfirmed > 0 %}
+                    <p>Unconfirmed:</p>
+                {% endif %}
+                {% if wallet.amount_immature > 0 %}
+                    <p>
+                        Immature:
+                        <tool-tip style="color: #fff" title='{{ _("What are immature outputs?") }}'>
+                            {{ _('The UTXO of coinbase transactions (mining rewards) have the special condition that they cannot be spent for at least 100 blocks. Their amount is not included in the total balance here. You see these outputs because you are using regtest and have mined blocks.') }}
+                        </tool-tip>
+                    </p>
                 {% endif %}
             </div>
-            {% if wallet.amount_unconfirmed > 0 or wallet.amount_immature > 0 %}
+            <div class="balances-right-amounts">
                 <div>
-                    Confirmed: {{ wallet.amount_confirmed | btcunitamount }}
-                    {% if specter.unit == 'sat' %}
-                        sats
-                    {% else %}
-                        {% if specter.is_testnet %}t{%endif%}{% if specter.is_liquid %}L{%endif%}BTC
-                    {% endif %}
-                    {% if specter.price_check %} 
-                        <span class="note">({{ wallet.amount_confirmed | altunit }})</span>
-                    {% endif %}
+                    <h3 id="fullbalance_amount">{{ wallet.amount_total | btcunitamount }}
+                        {% if specter.unit == 'sat' %}
+                            sats
+                        {% else %}
+                            {% if specter.is_testnet %}t{%endif%}{% if specter.is_liquid %}L{%endif%}BTC
+                        {% endif %}
+                        {% if specter.price_check %} 
+                            <span class="note">({{ wallet.amount_total | altunit }})</span>
+                        {% endif %}
+                    </h3>
                 </div>
-                {% if wallet.amount_unconfirmed > 0 %}
-                <div>
-                    Unconfirmed: {{ wallet.amount_unconfirmed | btcunitamount }}
-                    {% if specter.unit == 'sat' %}
-                        sats
-                    {% else %}
-                        {% if specter.is_testnet %}t{%endif%}{% if specter.is_liquid %}L{%endif%}BTC
+                {% if wallet.amount_unconfirmed > 0 or wallet.amount_immature > 0 %}
+                    <div>
+                        <p>
+                            {{ wallet.amount_confirmed | btcunitamount }}
+                            {% if specter.unit == 'sat' %}
+                                sats
+                            {% else %}
+                                {% if specter.is_testnet %}t{%endif%}{% if specter.is_liquid %}L{%endif%}BTC
+                            {% endif %}
+                            {% if specter.price_check %} 
+                                <span class="note">({{ wallet.amount_confirmed | altunit }})</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    {% if wallet.amount_unconfirmed > 0 %}
+                    <div>
+                        <p>
+                            {{ wallet.amount_unconfirmed | btcunitamount }}
+                            {% if specter.unit == 'sat' %}
+                                sats
+                            {% else %}
+                                {% if specter.is_testnet %}t{%endif%}{% if specter.is_liquid %}L{%endif%}BTC
+                            {% endif %}
+                            {% if specter.price_check %} 
+                                <span class="note">({{ wallet.amount_unconfirmed | altunit }})</span>
+                            {% endif %}
+                        </p>
+                    </div>
                     {% endif %}
-                    {% if specter.price_check %} 
-                        <span class="note">({{ wallet.amount_unconfirmed | altunit }})</span>
+                    {% if wallet.amount_immature > 0 and specter.chain == "regtest" %}
+                    <div style="color: grey">
+                        <p>
+                            {{ wallet.amount_immature | btcunitamount }} 
+                            {% if specter.unit == 'sat' %}
+                                sats
+                            {% else %}
+                                {% if specter.is_testnet %}t{%endif%}{% if specter.is_liquid %}L{%endif%}BTC
+                            {% endif %}
+                            {% if specter.price_check %} 
+                                <span class="note" style="color: grey">({{ wallet.amount_immature | altunit }})</span>
+                            {% endif %}
+                        </p>
+                    </div>
                     {% endif %}
-                </div>
-                {% endif %}
-                {% if wallet.amount_immature > 0 and specter.chain == "regtest" %}
-                <div style="color: grey">
-                    Immature: {{ wallet.amount_immature | btcunitamount }} 
-                    {% if specter.unit == 'sat' %}
-                        sats
-                    {% else %}
-                        {% if specter.is_testnet %}t{%endif%}{% if specter.is_liquid %}L{%endif%}BTC
-                    {% endif %}
-                    {% if specter.price_check %} 
-                        <span class="note" style="color: grey">({{ wallet.amount_immature | altunit }})</span>
-                    {% endif %}
-                    <tool-tip style="color: #fff" title='{{ _("What are immature outputs?") }}'>
-                        {{ _('The UTXO of coinbase transactions (mining rewards) have the special condition that they cannot be spent for at least 100 blocks. Their amount is not included in the total balance here. You see these outputs because you are using regtest and have mined blocks.') }}
-                    </tool-tip>
-                </div>
-                {% endif %}
-                {% elif wallet.amount_immature > 0 and specter.chain == "main" %}
-                <div style="color: #ccc">
-                    Immature: {{ wallet.amount_immature | btcunitamount }} 
-                    {% if specter.unit == 'sat' %}
-                        sats
-                    {% else %}
-                        {% if specter.is_testnet %}t{%endif%}{% if specter.is_liquid %}L{%endif%}BTC
-                    {% endif %}
-                    {% if specter.price_check %} 
-                        <span class="note" style="color: grey">({{ wallet.amount_immature | altunit }})</span>
-                    {% endif %}
-                    <tool-tip style="color: #fff" title='{{ _("What are immature outputs?") }}'>
-                        {{ _('The UTXO of coinbase transactions (mining rewards) have the special condition that they cannot be spent for at least 100 blocks. Their amount is not included in the total balance here.') }}
-                    </tool-tip>
+                    {% elif wallet.amount_immature > 0 and specter.chain == "main" %}
+                    <div style="color: #ccc">
+                        {{ wallet.amount_immature | btcunitamount }} 
+                        {% if specter.unit == 'sat' %}
+                            sats
+                        {% else %}
+                            {% if specter.is_testnet %}t{%endif%}{% if specter.is_liquid %}L{%endif%}BTC
+                        {% endif %}
+                        {% if specter.price_check %} 
+                            <span class="note" style="color: grey">({{ wallet.amount_immature | altunit }})</span>
+                        {% endif %}
+                        <tool-tip style="color: #fff" title='{{ _("What are immature outputs?") }}'>
+                            {{ _('The UTXO of coinbase transactions (mining rewards) have the special condition that they cannot be spent for at least 100 blocks. Their amount is not included in the total balance here.') }}
+                        </tool-tip>
+                    </div>
                 </div>
             {% endif %}
         </div>

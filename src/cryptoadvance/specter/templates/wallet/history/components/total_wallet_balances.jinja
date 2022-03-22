@@ -12,7 +12,7 @@
             <div class="balances-left-titles">
                 <h3>Total amount:</h3>
                 {% if wallet.amount_unconfirmed > 0 or wallet.amount_immature > 0 %}
-                    <p>Confirmed:</p> 
+                    <p>Confirmed:</p>
                 {% endif %}
                 {% if (wallet.amount_unconfirmed > 0 or wallet.amount_immature > 0) and wallet.amount_unconfirmed > 0 %}
                     <p>Unconfirmed:</p>

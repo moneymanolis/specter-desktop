@@ -511,14 +511,14 @@ input:hover{
 }
 .balances-left-titles{
     display: flex;
-    flex-direction: column;
     width: 60%;
+    flex-direction: column;
     align-items: center;
 }
 .balances-right-amounts{
     display: flex;
-    flex-direction: column;
     width: 40%;
+    flex-direction: column;
     align-items: flex-start;
 }
 .balances{
